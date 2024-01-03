@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "661990289293",
+    "project_id": "metromarketmate",
+    "storage_bucket": "metromarketmate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661990289293:android:07d14db3d1282cd69f57c4",
+        "android_client_info": {
+          "package_name": "com.google.metromarketmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEwGPB84n_hRKqTzzYjxx8g4cfdmGD478"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
