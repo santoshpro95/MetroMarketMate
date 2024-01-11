@@ -16,7 +16,7 @@ class SplashBloc {
   // region Init
   void init() {
     // open Home Screen
-   // openHomeScreen();
+    openHomeScreen();
   }
 
   // endregion
@@ -28,10 +28,15 @@ class SplashBloc {
 
     // region open home screen
     var screen = const HomeScreen();
-    var route = CommonMethods.createRouteRTL(screen);
+    var route = PageRouteBuilder(
+      pageBuilder: (_, __, ___) => screen,
+      transitionDuration: const Duration(milliseconds: 300),
+      transitionsBuilder: (_, a, __, c) => FadeTransition(opacity: a, child: c),
+    );
 
     if (!context.mounted) return;
     Navigator.push(context, route);
+
     // endregion
   }
 // endregion
