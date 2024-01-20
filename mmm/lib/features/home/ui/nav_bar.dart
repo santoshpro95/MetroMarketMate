@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mmm/features/home/home_bloc.dart';
+import 'package:mmm/features/home/bloc/home_bloc.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_images.dart';
 

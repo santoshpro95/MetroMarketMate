@@ -1,0 +1,137 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mmm/utils/app_colors.dart';
+import 'package:mmm/utils/app_constants.dart';
+import 'package:mmm/utils/app_images.dart';
+import 'package:mmm/utils/app_strings.dart';
+import '../bloc/home_bloc.dart';
+import 'nav_bar.dart';
+
+// region HomeScreen
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+// endregion
+
+class _HomeScreenState extends State<HomeScreen> {
+  // region Bloc
+  late HomeBloc homeBloc;
+
+  // endregion
+
+  // region Init
+  @override
+  void initState() {
+    homeBloc = HomeBloc(context);
+    homeBloc.init();
+    super.initState();
+  }
+
+  // endregion
+
+  // endregion build
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: homeBloc.scaffoldKey,
+      drawer: navBar(homeBloc),
+      appBar: AppBar(automaticallyImplyLeading: false,
+          backgroundColor: AppColors.background,
+          toolbarHeight: 0, title: Text(AppStrings.appFeature)),
+      body: body(),
+    );
+  }
+
+  // endregion
+
+  // region Body
+  Widget body() {
+    return Column(
+      children: [
+        Container(
+          color:  AppColors.background,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+
+              children: [
+                sideBar(),
+                citySelection(),
+                becomeMate(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // endregion
+
+  // region City Selection
+  Widget citySelection() {
+    return Expanded(
+      child: Center(
+        child: ValueListenableBuilder<String>(
+            valueListenable: homeBloc.citySelectionCtrl,
+            builder: (context, snapshot, _) {
+              return DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  borderRadius: BorderRadius.circular(30),
+                  value: snapshot,
+                  dropdownColor: AppColors.background,
+                  icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+                  items: AppConstants.cities.map((String city) {
+                    return DropdownMenuItem(
+                        value: city,
+                        child: Text(
+                          city,
+                          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
+                        ));
+                  }).toList(),
+                  onChanged: (String? newValue) => homeBloc.citySelectionCtrl.value = newValue!,
+                ),
+              );
+            }),
+      ),
+    );
+  }
+
+  // endregion
+
+// region becomeMate
+  Widget becomeMate() {
+    return Expanded(
+      child: Row(
+        children: [
+          const Expanded(child: SizedBox()),
+          Text(AppStrings.becomeMate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20)),
+          const SizedBox(width: 10),
+          ValueListenableBuilder<bool>(
+              valueListenable: homeBloc.mateCtrl,
+              builder: (context, value, _) {
+                return Switch.adaptive(value: value, activeColor: AppColors.primary, onChanged: (value) => homeBloc.mateCtrl.value = value);
+              })
+        ],
+      ),
+    );
+  }
+
+// endregion
+
+// region sideBar
+  Widget sideBar() {
+    return Container(
+      margin: const EdgeInsets.only(right: 20),
+        alignment: Alignment.centerLeft,
+        child: CupertinoButton(
+            onPressed: () => homeBloc.scaffoldKey.currentState!.openDrawer(),
+            padding: EdgeInsets.zero,
+            child: SvgPicture.asset(AppImages.nav, height: 35, width: 35)));
+  }
+// endregion
+}

@@ -1,6 +1,6 @@
 class AppStrings{
   static String appFeature = "Feature Name";
-  static String becomeMate = "Become a Mate";
+  static String becomeMate = "Mate?";
 
   // Nav Items
   static String home = "Home";

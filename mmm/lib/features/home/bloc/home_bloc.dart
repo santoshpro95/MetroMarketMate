@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mmm/utils/app_constants.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
 
@@ -13,6 +14,7 @@ class HomeBloc {
   // region Controller
   final mateCtrl = ValueNotifier<bool>(false);
   final navCtrl = ValueNotifier<NavItems>(NavItems.home);
+  final citySelectionCtrl = ValueNotifier(AppConstants.cities.first);
 
   // endregion
 

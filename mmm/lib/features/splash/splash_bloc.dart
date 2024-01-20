@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mmm/features/home/home_screen.dart';
-import 'package:mmm/utils/common_methods.dart';
+import 'package:mmm/features/home/ui/home_screen.dart';
 
 class SplashBloc {
   // region Common Methods

@@ -1,25 +1,15 @@
 {
   "success": true,
-  "data": [
+  "result": [
     {
-      "id": "2ddf34",
-      "market": "CP Market",
-      "mates": [
-        {
-          "id": "234wef23",
-          "image": ""
-        }
-      ]
-    },
-    {
-      "id": "2ddf34",
-      "market": "DLF Phase 3",
-      "mates": [
-        {
-          "id": "234wef23",
-          "image": ""
-        }
-      ]
+      ""
+
     }
+
+
+
   ]
+
+
+
 }
