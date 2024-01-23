@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mmm/features/shops/shops_screen.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_constants.dart';
 import 'package:mmm/utils/app_images.dart';
@@ -53,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           citySelection(),
           becomeMate(),
+          const ShopsScreen()
         ],
       ),
     );
@@ -74,11 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
                 items: AppConstants.cities.map((String city) {
                   return DropdownMenuItem(
-                      value: city,
-                      child: Text(
-                        city,
-                        style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
-                      ));
+                      value: city, child: Text(city, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500)));
                 }).toList(),
                 onChanged: (String? newValue) => homeBloc.citySelectionCtrl.value = newValue!,
               ),
@@ -91,18 +89,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // region becomeMate
   Widget becomeMate() {
-    return Row(
-      children: [
-        const Expanded(child: SizedBox()),
-        Text(AppStrings.becomeMate, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20)),
-        const SizedBox(width: 10),
-        ValueListenableBuilder<bool>(
-            valueListenable: homeBloc.mateCtrl,
-            builder: (context, data, _) {
-              return Switch.adaptive(value: data, activeColor: AppColors.primary, onChanged: (value) => homeBloc.loginConfirmation(value));
-            })
-      ],
-    );
+    return ValueListenableBuilder<bool>(
+        valueListenable: homeBloc.mateCtrl,
+        builder: (context, data, _) {
+          return Row(
+            children: [
+              const Expanded(child: SizedBox()),
+              Text(data ? AppStrings.welcomeMate : AppStrings.becomeMate,
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20)),
+              const SizedBox(width: 10),
+              Switch.adaptive(value: data, activeColor: AppColors.primary, onChanged: (value) => homeBloc.loginConfirmation(value)),
+            ],
+          );
+        });
   }
 
 // endregion

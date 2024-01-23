@@ -31,17 +31,33 @@ class HomeBloc {
   // endregion
 
   // region Init
-  void init() async {
-    // default mate status
-    await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, mateCtrl.value);
+  void init() {
+    checkMateStatus();
   }
 
 // endregion
+
+  // region checkMateStatus
+  Future<void> checkMateStatus() async {
+    var hasData = await cacheStorageService.containsKey(StorageKeys.SavedMateKey);
+    if (hasData) {
+      var getData = await cacheStorageService.getBoolean(StorageKeys.SavedMateKey);
+      mateCtrl.value = getData;
+      await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, getData);
+    } else {
+      // default mate status
+      await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, mateCtrl.value);
+    }
+  }
+
+  // endregion
 
   // region Login Confirmation
   void loginConfirmation(var value) {
     mateCtrl.value = value;
     if (!value) return;
+
+    /// need to check if already logged in, then no need to show confirmation dialog
     CommonWidgets.confirmationBox(context, AppStrings.loginConfirm, AppStrings.loginConfirmMsg, openLoginScreen, cancelLogin);
   }
 
@@ -60,7 +76,7 @@ class HomeBloc {
   void openLoginScreen() async {
     await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, mateCtrl.value);
     if (!context.mounted) return;
-    
+
     // close popup
     Navigator.pop(context);
 

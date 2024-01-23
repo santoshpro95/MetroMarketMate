@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mmm/features/login/login_bloc.dart';
+import 'package:mmm/utils/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -37,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: AppColors.background, foregroundColor: Colors.white, elevation: 0),
+      backgroundColor: AppColors.background,
       body: body(),
     );
   }

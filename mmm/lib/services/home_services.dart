@@ -1,6 +1,5 @@
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/utils/api_constants.dart';
-
 import 'http_service.dart';
 
 class HomeServices {
