@@ -23,7 +23,7 @@ class SplashBloc {
   // region OpenHomeScreen
   void openHomeScreen() async {
     // delay for 3 seconds
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
 
     // region open home screen
     var screen = const HomeScreen();

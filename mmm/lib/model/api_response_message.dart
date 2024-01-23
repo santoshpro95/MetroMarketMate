@@ -1,18 +1,15 @@
 class CommonApiResponse {
-  String? status;
   String? message;
 
-  CommonApiResponse({required this.status, required this.message});
+  CommonApiResponse({this.message});
 
   CommonApiResponse.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
     message = json['message'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    data['message'] = message;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['message'] = this.message;
     return data;
   }
 }

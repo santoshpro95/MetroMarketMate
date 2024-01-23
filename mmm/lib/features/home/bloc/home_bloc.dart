@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:mmm/features/login/login_screen.dart';
+import 'package:mmm/services/cache_storage/cache_storage_service.dart';
+import 'package:mmm/services/cache_storage/storage_keys.dart';
 import 'package:mmm/utils/app_constants.dart';
-import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
+import 'package:mmm/utils/common_methods.dart';
+import 'package:mmm/utils/common_widgets.dart';
 
 class HomeBloc {
   // region Common Variables
   BuildContext context;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-  List<NavItems> navItems = [NavItems.home, NavItems.profile, NavItems.orderDetails, NavItems.notification, NavItems.settings];
+
+  // endregion
+
+  // region Services
+  CacheStorageService cacheStorageService = CacheStorageService();
 
   // endregion
 
   // region Controller
   final mateCtrl = ValueNotifier<bool>(false);
-  final navCtrl = ValueNotifier<NavItems>(NavItems.home);
   final citySelectionCtrl = ValueNotifier(AppConstants.cities.first);
 
   // endregion
@@ -24,29 +31,48 @@ class HomeBloc {
   // endregion
 
   // region Init
-  void init() {}
-
-// endregion
-
-// region open Screen
-  void openScreen(NavItems item) {
-    navCtrl.value = item;
-    Navigator.pop(context);
+  void init() async {
+    // default mate status
+    await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, mateCtrl.value);
   }
+
+// endregion
+
+  // region Login Confirmation
+  void loginConfirmation(var value) {
+    mateCtrl.value = value;
+    if (!value) return;
+    CommonWidgets.confirmationBox(context, AppStrings.loginConfirm, AppStrings.loginConfirmMsg, openLoginScreen, cancelLogin);
+  }
+
+  // endregion
+
+  // region cancelLogin
+  void cancelLogin() {
+    // close popup
+    Navigator.pop(context);
+    mateCtrl.value = false;
+  }
+
+  // endregion
+
+  // region openLoginScreen
+  void openLoginScreen() async {
+    await cacheStorageService.saveBoolean(StorageKeys.SavedMateKey, mateCtrl.value);
+    if (!context.mounted) return;
+    
+    // close popup
+    Navigator.pop(context);
+
+    // open login screen
+    var screen = const LoginScreen();
+    var route = CommonMethods.createRouteRTL(screen);
+    Navigator.push(context, route);
+  }
+
+  // endregion
+
+// region Dispose
+  void dispose() {}
 // endregion
 }
-
-// region NavItems
-class NavItems {
-  final String icon;
-  final String item;
-
-  NavItems(this.icon, this.item);
-
-  static NavItems home = NavItems(AppImages.home, AppStrings.home);
-  static NavItems profile = NavItems(AppImages.profile, AppStrings.profile);
-  static NavItems settings = NavItems(AppImages.home, AppStrings.settings);
-  static NavItems orderDetails = NavItems(AppImages.home, AppStrings.orderDetails);
-  static NavItems notification = NavItems(AppImages.home, AppStrings.notification);
-}
-// endregion
