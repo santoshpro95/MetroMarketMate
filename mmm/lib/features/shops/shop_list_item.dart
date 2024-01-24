@@ -74,17 +74,21 @@ Widget shopImage(Result shop) {
 
 // region shopDetails
 Widget shopDetails(Result shop) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text("${shop.name}", style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 20)),
-      const Row(
-        children: [
-          Icon(Icons.location_on_outlined, color: AppColors.dropDown),
-          Text("2.0 Kms", style: TextStyle(color: AppColors.dropDown, fontWeight: FontWeight.w800, fontSize: 15)),
-        ],
-      ),
-    ],
+  return CupertinoButton(
+    onPressed: () {},
+    padding: EdgeInsets.zero,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("${shop.name}", maxLines: 2, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 18)),
+        const Row(
+          children: [
+            Icon(Icons.location_on_outlined, color: AppColors.dropDown),
+            Text("Open location", style: TextStyle(color: AppColors.dropDown, fontWeight: FontWeight.w700, fontSize: 14)),
+          ],
+        ),
+      ],
+    ),
   );
 }
 // endregion

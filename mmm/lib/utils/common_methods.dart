@@ -6,8 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CommonMethods{
-
+class CommonMethods {
   //#region Region - Route Right to Left
   static Route createRouteRTL(var screen) {
     return CupertinoPageRoute(builder: (_) => screen);
@@ -28,9 +27,9 @@ class CommonMethods{
     ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetHeight: size, targetWidth: size);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))?.buffer.asUint8List();
+    var img = await fi.image.toByteData(format: ui.ImageByteFormat.png);
+    return img?.buffer.asUint8List();
   }
 
 // endregion
-
 }

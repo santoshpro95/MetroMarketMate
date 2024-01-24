@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mmm/features/home/bloc/home_bloc.dart';
 import 'package:mmm/features/shops/shops_bloc.dart';
 import 'package:mmm/utils/app_colors.dart';
+import 'package:mmm/utils/custom_google_map.dart';
 import 'shop_list_item.dart';
 
 // region ShopsScreen
@@ -97,6 +98,10 @@ class _ShopsScreenState extends State<ShopsScreen> {
                   markers: shopsBloc.markers,
                   mapToolbarEnabled: true,
                   myLocationButtonEnabled: false,
+                  onMapCreated: (GoogleMapController controller) {
+                    shopsBloc.googleMapController = controller;
+                    controller.setMapStyle(CustomGoogleMap.customMapStyle());
+                  },
                   buildingsEnabled: true);
             }),
       ),
