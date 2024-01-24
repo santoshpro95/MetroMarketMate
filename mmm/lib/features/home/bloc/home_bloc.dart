@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mmm/features/login/login_screen.dart';
+import 'package:mmm/features/register/register_screen.dart';
 import 'package:mmm/services/cache_storage/cache_storage_service.dart';
 import 'package:mmm/services/cache_storage/storage_keys.dart';
 import 'package:mmm/utils/app_constants.dart';
@@ -84,7 +84,7 @@ class HomeBloc {
     Navigator.pop(context);
 
     // open login screen
-    var screen = const LoginScreen();
+    var screen = const RegisterScreen();
     var route = CommonMethods.createRouteRTL(screen);
     Navigator.push(context, route);
   }

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:mmm/features/login/login_bloc.dart';
+import 'package:mmm/features/register/register_bloc.dart';
 import 'package:mmm/utils/app_colors.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   // region Bloc
-  late LoginBloc loginBloc;
+  late RegisterBloc loginBloc;
 
   // endregion
 
   // region Init
   @override
   void initState() {
-    loginBloc = LoginBloc(context);
+    loginBloc = RegisterBloc(context);
     loginBloc.init();
     super.initState();
   }

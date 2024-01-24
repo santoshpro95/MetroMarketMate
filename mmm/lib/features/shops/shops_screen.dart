@@ -70,8 +70,10 @@ class _ShopsScreenState extends State<ShopsScreen> {
     return ValueListenableBuilder<bool>(
         valueListenable: shopsBloc.homeBloc.toggleViewCtrl,
         builder: (context, isMapView, _) {
-          if (isMapView) return googleMap();
-          return shopList();
+          return IndexedStack(
+            index: isMapView ? 0 : 1,
+            children: [googleMap(), shopList()],
+          );
         });
   }
 

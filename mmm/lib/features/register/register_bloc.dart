@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 
-class LoginBloc {
+class RegisterBloc {
   // region Common Variables
   BuildContext context;
 
   // endregion
 
   // region | Constructor |
-  LoginBloc(this.context);
+  RegisterBloc(this.context);
 
   // endregion
 
