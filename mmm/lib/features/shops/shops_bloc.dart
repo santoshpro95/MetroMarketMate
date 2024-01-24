@@ -25,9 +25,10 @@ class ShopsBloc {
   // region Google Map
   late Completer<GoogleMapController> controller = Completer();
   late GoogleMapController googleMapController;
-  late CameraPosition initialCameraPosition;
+  CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(20.5937, 78.9629), zoom: 7);
   Set<Marker> markers = HashSet<Marker>();
-  var markerIcon;
+
+  //var markerIcon;
 
   // endregion
 
@@ -59,7 +60,7 @@ class ShopsBloc {
   Future<void> initMap() async {
     // initialise Map Controller
     googleMapController = await controller.future;
-    markerIcon = await CommonMethods.getBytesFromAsset(AppImages.marker, 100);
+    // markerIcon = await CommonMethods.getBytesFromAsset(AppImages.marker, 100);
     if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
   }
 
@@ -111,7 +112,7 @@ class ShopsBloc {
       onTap: () {},
       anchor: const Offset(0.5, 0.5),
       markerId: MarkerId('$point'),
-      icon: markerIcon,
+      //icon: markerIcon,
       position: point,
     );
   }

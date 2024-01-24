@@ -79,21 +79,26 @@ class _ShopsScreenState extends State<ShopsScreen> {
 
   // region googleMap
   Widget googleMap() {
-    return StreamBuilder<bool>(
-        stream: shopsBloc.mapCtrl.stream,
-        builder: (context, snapshot) {
-          return GoogleMap(
-              initialCameraPosition: shopsBloc.initialCameraPosition,
-              myLocationEnabled: true,
-              compassEnabled: true,
-              mapType: MapType.normal,
-              trafficEnabled: true,
-              markers: shopsBloc.markers,
-              mapToolbarEnabled: true,
-              myLocationButtonEnabled: false,
-              buildingsEnabled: true,
-              onMapCreated: (GoogleMapController controller) => shopsBloc.controller.complete(controller));
-        });
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: StreamBuilder<bool>(
+            stream: shopsBloc.mapCtrl.stream,
+            builder: (context, snapshot) {
+              return GoogleMap(
+                  initialCameraPosition: shopsBloc.initialCameraPosition,
+                  myLocationEnabled: true,
+                  compassEnabled: true,
+                  mapType: MapType.normal,
+                  trafficEnabled: true,
+                  markers: shopsBloc.markers,
+                  mapToolbarEnabled: true,
+                  myLocationButtonEnabled: false,
+                  buildingsEnabled: true);
+            }),
+      ),
+    );
   }
 
 // endregion
@@ -102,7 +107,6 @@ class _ShopsScreenState extends State<ShopsScreen> {
   Widget shopList() {
     return GridView.count(
         crossAxisCount: 2,
-        mainAxisSpacing: 10,
         crossAxisSpacing: 10,
         children: List<Widget>.generate(shopsBloc.shops.length, (index) {
           return shopListItem(shopsBloc.shops[index]);
