@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mmm/features/shops/shops_screen.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_constants.dart';
-import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
 import '../bloc/home_bloc.dart';
 
@@ -43,8 +41,12 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: AppColors.background,
             key: homeBloc.scaffoldKey,
             bottomNavigationBar: bottomNavBar(bottomIndex),
-            appBar:
-                AppBar(automaticallyImplyLeading: false, backgroundColor: AppColors.background, toolbarHeight: 0, title: Text(AppStrings.appFeature)),
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: AppColors.background,
+              toolbarHeight: 0,
+              title: Text(AppStrings.appFeature),
+            ),
             body: body(bottomIndex),
           );
         });

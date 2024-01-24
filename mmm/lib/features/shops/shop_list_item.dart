@@ -36,8 +36,7 @@ Widget shopImage(Result shop) {
             width: double.maxFinite,
             child: Padding(
               padding: const EdgeInsets.all(5),
-              child: SvgPicture.asset(AppImages.imgPlaceholder,
-                  colorFilter: ColorFilter.mode(Colors.grey.withAlpha(80), BlendMode.srcIn), fit: BoxFit.cover),
+              child: SvgPicture.asset(AppImages.imgPlaceholder, colorFilter: ColorFilter.mode(Colors.grey.withAlpha(80), BlendMode.srcIn)),
             ),
           ),
           Visibility(
@@ -50,10 +49,9 @@ Widget shopImage(Result shop) {
                 borderRadius: BorderRadius.circular(10),
                 child: SizedBox.fromSize(
                     child: Image.network(
-                  'https://swarajya.gumlet.io/swarajya/2019-05/6985b1de-36c1-4839-8091-01f3db8d63c9/3983494030_77afbe2c3a_z.jpg',
-                  fit: BoxFit.cover,
-                  opacity: const AlwaysStoppedAnimation(.8),
-                )),
+                        'https://swarajya.gumlet.io/swarajya/2019-05/6985b1de-36c1-4839-8091-01f3db8d63c9/3983494030_77afbe2c3a_z.jpg',
+                        fit: BoxFit.cover,
+                        opacity: const AlwaysStoppedAnimation(.8))),
               ),
             ),
           ),
@@ -63,7 +61,9 @@ Widget shopImage(Result shop) {
                 alignment: Alignment.bottomRight,
                 child: CupertinoButton(
                     onPressed: () {},
-                    child: SvgPicture.asset(AppImages.images, height: 20, colorFilter: const ColorFilter.mode(AppColors.background, BlendMode.srcIn)))),
+                    padding: EdgeInsets.zero,
+                    child:
+                        SvgPicture.asset(AppImages.images, height: 20, colorFilter: const ColorFilter.mode(AppColors.background, BlendMode.srcIn)))),
           )
         ],
       ),

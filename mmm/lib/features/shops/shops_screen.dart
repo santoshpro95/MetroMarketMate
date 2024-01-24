@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mmm/features/home/bloc/home_bloc.dart';
 import 'package:mmm/features/shops/shops_bloc.dart';
 import 'package:mmm/utils/app_colors.dart';
@@ -69,27 +70,40 @@ class _ShopsScreenState extends State<ShopsScreen> {
     return ValueListenableBuilder<bool>(
         valueListenable: shopsBloc.homeBloc.toggleViewCtrl,
         builder: (context, isMapView, _) {
-          if (isMapView) return mapView();
+          if (isMapView) return googleMap();
           return shopList();
         });
   }
 
   // endregion
 
-  // region mapView
-  Widget mapView() {
-    return Container();
+  // region googleMap
+  Widget googleMap() {
+    return StreamBuilder<bool>(
+        stream: shopsBloc.mapCtrl.stream,
+        builder: (context, snapshot) {
+          return GoogleMap(
+              initialCameraPosition: shopsBloc.initialCameraPosition,
+              myLocationEnabled: true,
+              compassEnabled: true,
+              mapType: MapType.normal,
+              trafficEnabled: true,
+              markers: shopsBloc.markers,
+              mapToolbarEnabled: true,
+              myLocationButtonEnabled: false,
+              buildingsEnabled: true,
+              onMapCreated: (GoogleMapController controller) => shopsBloc.controller.complete(controller));
+        });
   }
 
-  // endregion
+// endregion
 
   // region shopList
   Widget shopList() {
     return GridView.count(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        scrollDirection: Axis.horizontal,
         children: List<Widget>.generate(shopsBloc.shops.length, (index) {
           return shopListItem(shopsBloc.shops[index]);
         }));

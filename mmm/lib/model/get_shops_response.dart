@@ -26,8 +26,8 @@ class GetShopsResponse {
 
 class Result {
   String? name;
-  String? lat;
-  String? lng;
+  double? lat;
+  double? lng;
   List<String>? images;
 
   Result({this.name, this.lat, this.lng, this.images});
