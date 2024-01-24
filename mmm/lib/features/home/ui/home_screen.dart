@@ -36,30 +36,48 @@ class _HomeScreenState extends State<HomeScreen> {
   // endregion build
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      key: homeBloc.scaffoldKey,
-      appBar: AppBar(automaticallyImplyLeading: false, backgroundColor: AppColors.background, toolbarHeight: 0, title: Text(AppStrings.appFeature)),
-      body: body(),
-    );
+    return ValueListenableBuilder<int>(
+        valueListenable: homeBloc.bottomViewCtrl,
+        builder: (context, bottomIndex, _) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            key: homeBloc.scaffoldKey,
+            bottomNavigationBar: bottomNavBar(bottomIndex),
+            appBar:
+                AppBar(automaticallyImplyLeading: false, backgroundColor: AppColors.background, toolbarHeight: 0, title: Text(AppStrings.appFeature)),
+            body: body(bottomIndex),
+          );
+        });
+  }
+
+  // endregion
+
+  // region bottomNavBar
+  Widget bottomNavBar(int bottomIndex) {
+    return BottomNavigationBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: Colors.grey,
+        currentIndex: bottomIndex,
+        onTap: (indexValue) => homeBloc.bottomViewCtrl.value = indexValue,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.shop), label: "Shops"),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Mates"),
+        ]);
   }
 
   // endregion
 
   // region Body
-  Widget body() {
+  Widget body(int bottomIndex) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           citySelection(),
-          Row(
-            children: [
-              toggleView(),
-              becomeMate(),
-            ],
-          ),
-          const ShopsScreen()
+          Row(children: [toggleView(), becomeMate()]),
+          ShopsScreen(homeBloc: homeBloc)
         ],
       ),
     );

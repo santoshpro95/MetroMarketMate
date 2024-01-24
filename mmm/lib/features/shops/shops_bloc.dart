@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:mmm/features/home/bloc/home_bloc.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
 
@@ -12,7 +13,7 @@ class ShopsBloc {
   // region Common Variables
   BuildContext context;
   List<Result> shops = [];
-
+  HomeBloc homeBloc;
   // endregion
 
   // region Services
@@ -26,7 +27,7 @@ class ShopsBloc {
   // endregion
 
   // region | Constructor |
-  ShopsBloc(this.context);
+  ShopsBloc(this.context, this.homeBloc);
 
   // endregion
 

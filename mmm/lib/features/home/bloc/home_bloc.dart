@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mmm/features/login/login_screen.dart';
 import 'package:mmm/services/cache_storage/cache_storage_service.dart';
@@ -23,6 +25,7 @@ class HomeBloc {
   final mateCtrl = ValueNotifier<bool>(false);
   final citySelectionCtrl = ValueNotifier(AppConstants.cities.first);
   final toggleViewCtrl = ValueNotifier<bool>(false);
+  final bottomViewCtrl = ValueNotifier<int>(0);
   // endregion
 
   // region | Constructor |
