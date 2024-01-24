@@ -53,11 +53,63 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           citySelection(),
-          becomeMate(),
+          Row(
+            children: [
+              toggleView(),
+              becomeMate(),
+            ],
+          ),
           const ShopsScreen()
         ],
       ),
     );
+  }
+
+  // endregion
+
+  // region toggleView
+  Widget toggleView() {
+    return ValueListenableBuilder<bool>(
+        valueListenable: homeBloc.toggleViewCtrl,
+        builder: (context, value, _) {
+          return GestureDetector(
+            onTap: () => homeBloc.toggleViewCtrl.value = !value,
+            child: Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: AppColors.primary),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: value ? AppColors.background : AppColors.primary),
+                      child: Center(
+                          child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                        child: Text(
+                          'Map',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: value ? Colors.white : AppColors.background),
+                        ),
+                      )),
+                    ),
+                    const SizedBox(width: 5),
+                    Container(
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: value ? AppColors.primary : AppColors.background),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                        child: Center(
+                            child: Text(
+                          'List',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: value ? AppColors.background : Colors.white),
+                        )),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   // endregion
@@ -89,19 +141,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // region becomeMate
   Widget becomeMate() {
-    return ValueListenableBuilder<bool>(
-        valueListenable: homeBloc.mateCtrl,
-        builder: (context, data, _) {
-          return Row(
-            children: [
-              const Expanded(child: SizedBox()),
-              Text(data ? AppStrings.welcomeMate : AppStrings.becomeMate,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20)),
-              const SizedBox(width: 10),
-              Switch.adaptive(value: data, activeColor: AppColors.primary, onChanged: (value) => homeBloc.loginConfirmation(value)),
-            ],
-          );
-        });
+    return Expanded(
+      child: ValueListenableBuilder<bool>(
+          valueListenable: homeBloc.mateCtrl,
+          builder: (context, data, _) {
+            return Row(
+              children: [
+                const Expanded(child: SizedBox()),
+                Text(data ? AppStrings.welcomeMate : AppStrings.becomeMate,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18)),
+                const SizedBox(width: 10),
+                Switch.adaptive(value: data, activeColor: AppColors.primary, onChanged: (value) => homeBloc.loginConfirmation(value)),
+              ],
+            );
+          }),
+    );
   }
 
 // endregion

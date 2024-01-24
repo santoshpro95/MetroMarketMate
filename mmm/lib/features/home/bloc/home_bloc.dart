@@ -22,7 +22,7 @@ class HomeBloc {
   // region Controller
   final mateCtrl = ValueNotifier<bool>(false);
   final citySelectionCtrl = ValueNotifier(AppConstants.cities.first);
-
+  final toggleViewCtrl = ValueNotifier<bool>(false);
   // endregion
 
   // region | Constructor |
