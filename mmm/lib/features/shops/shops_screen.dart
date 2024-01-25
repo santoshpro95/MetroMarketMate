@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mmm/features/home/bloc/home_bloc.dart';
+import 'package:mmm/features/home/home_bloc.dart';
 import 'package:mmm/features/shops/shops_bloc.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/custom_google_map.dart';
@@ -83,9 +83,10 @@ class _ShopsScreenState extends State<ShopsScreen> {
   // region googleMap
   Widget googleMap() {
     return Container(
+      padding: const EdgeInsets.only(bottom: 10),
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
         child: StreamBuilder<bool>(
             stream: shopsBloc.mapCtrl.stream,
             builder: (context, snapshot) {
@@ -114,9 +115,10 @@ class _ShopsScreenState extends State<ShopsScreen> {
   Widget shopList() {
     return GridView.count(
         crossAxisCount: 2,
+        childAspectRatio: 0.7,
         crossAxisSpacing: 10,
         children: List<Widget>.generate(shopsBloc.shops.length, (index) {
-          return shopListItem(shopsBloc.shops[index]);
+          return shopListItem(shopsBloc.shops[index], shopsBloc);
         }));
   }
 // endregion

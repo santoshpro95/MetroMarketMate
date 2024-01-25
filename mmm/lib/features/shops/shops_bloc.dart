@@ -2,12 +2,16 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mmm/features/home/bloc/home_bloc.dart';
+import 'package:mmm/features/home/home_bloc.dart';
+import 'package:mmm/features/shop_images/shop_images_screen.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
+
+import 'shop_image_popup.dart';
 
 // region Shop Status
 enum ShopStatus { Loading, Empty, Success, Failure }
@@ -19,15 +23,17 @@ class ShopsBloc {
   List<Result> shops = [];
   HomeBloc homeBloc;
   List<LatLng> allPoints = [];
+  PageController pageController = PageController();
 
   // endregion
 
   // region Google Map
   late Completer<GoogleMapController> controller = Completer();
   late GoogleMapController googleMapController;
-  CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(20.5937, 78.9629), zoom: 7);
+  CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(28.490147, 77.094030), zoom: 15);
   Set<Marker> markers = HashSet<Marker>();
   late BitmapDescriptor markerIcon;
+
   // endregion
 
   // region Services
@@ -48,17 +54,25 @@ class ShopsBloc {
 
   // region Init
   void init() {
-    getShops();
     initMap();
+    getShops();
   }
 
   // endregion
 
   // region initMap
   Future<void> initMap() async {
-    await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.marker).then((value) => markerIcon = value);
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.marker).then((value) => markerIcon = value);
     googleMapController = await controller.future;
-    if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
+  }
+
+  // endregion
+
+  // region View Image btn
+  void viewImageBtn(List<String> images) {
+    var screen = ShopImagesScreen(images: images);
+    var route = CommonMethods.createRouteRTL(screen);
+    Navigator.push(context, route);
   }
 
   // endregion
@@ -103,7 +117,7 @@ class ShopsBloc {
   // region GetMarker
   Marker getMarker(LatLng point) {
     return Marker(
-      draggable: true,
+      draggable: false,
       consumeTapEvents: true,
       visible: true,
       onTap: () {},
