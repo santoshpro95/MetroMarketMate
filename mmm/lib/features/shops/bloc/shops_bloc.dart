@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,11 +8,10 @@ import 'package:mmm/features/home/home_bloc.dart';
 import 'package:mmm/features/shop_images/shop_images_screen.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
+import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
-
-import 'open_map_popup.dart';
-import 'shop_image_popup.dart';
+import '../ui/open_map_popup.dart';
 
 // region Shop Status
 enum ShopStatus { Loading, Empty, Success, Failure }
@@ -35,6 +33,7 @@ class ShopsBloc {
   CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(28.490147, 77.094030), zoom: 15);
   Set<Marker> markers = HashSet<Marker>();
   late BitmapDescriptor markerIcon;
+  late BitmapDescriptor selectedMarkerIcon;
 
   // endregion
 
@@ -46,6 +45,7 @@ class ShopsBloc {
   // region Controller
   final shopCtrl = StreamController<ShopStatus>.broadcast();
   final mapCtrl = StreamController<bool>.broadcast();
+  final showShopCtrl = ValueNotifier(Result());
 
   // endregion
 
@@ -65,6 +65,7 @@ class ShopsBloc {
   // region initMap
   Future<void> initMap() async {
     BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.marker).then((value) => markerIcon = value);
+    BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.selectedMarker).then((value) => selectedMarkerIcon = value);
     googleMapController = await controller.future;
   }
 
@@ -113,7 +114,7 @@ class ShopsBloc {
 
       // generate markers
       for (var shop in shops) {
-        var marker = getMarker(LatLng(shop.lat ?? 0, shop.lng ?? 0));
+        var marker = getMarker(shop, false);
         markers.add(marker);
       }
 
@@ -128,17 +129,45 @@ class ShopsBloc {
 
   // endregion
 
+  // region onTapMarker
+  Future<void> onTapMarker(Result shop) async {
+    // show shop details
+    showShopCtrl.value = shop;
+    markers.clear();
+    
+    // generate markers
+    for (var shop in shops) {
+      var marker = getMarker(shop, shop.name == showShopCtrl.value.name);
+      markers.add(marker);
+    }
+
+    // refresh mapview
+    if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
+  }
+
+  // endregion
+
+  // region remove ShopDetails
+  void removeShopDetails() {
+    // clear shop
+    showShopCtrl.value = Result();
+
+    // refresh mapview
+    if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
+  }
+
+  // endregion
+
   // region GetMarker
-  Marker getMarker(LatLng point) {
+  Marker getMarker(Result shop, bool isSelectedMarker) {
     return Marker(
       draggable: false,
       consumeTapEvents: true,
       visible: true,
-      onTap: () {},
-      anchor: const Offset(0.5, 0.5),
-      markerId: MarkerId('$point'),
-      icon: markerIcon,
-      position: point,
+      onTap: () => onTapMarker(shop),
+      markerId: MarkerId('${shop.lat}${shop.lng}'),
+      icon: isSelectedMarker ? selectedMarkerIcon : markerIcon,
+      position: LatLng(shop.lat!, shop.lng!),
     );
   }
 

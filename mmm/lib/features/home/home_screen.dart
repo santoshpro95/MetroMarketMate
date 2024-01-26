@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mmm/features/shops/shops_screen.dart';
+import 'package:mmm/features/shops/ui/shops_screen.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_constants.dart';
 import 'package:mmm/utils/app_strings.dart';
