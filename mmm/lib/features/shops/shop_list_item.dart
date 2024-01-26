@@ -6,9 +6,11 @@ import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
+import 'package:mmm/utils/common_methods.dart';
+import 'package:mmm/utils/common_widgets.dart';
 
 // region shopListItem
-Widget shopListItem(Result shop, ShopsBloc shopsBloc) {
+Widget shopListItem(Result shop, ShopsBloc shopsBloc, BuildContext context) {
   return Container(
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.primary),
     margin: const EdgeInsets.only(top: 10),
@@ -16,7 +18,7 @@ Widget shopListItem(Result shop, ShopsBloc shopsBloc) {
       padding: const EdgeInsets.all(8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [shopImage(shop, shopsBloc), const SizedBox(width: 10), shopDetails(shop)],
+        children: [shopImage(shop, shopsBloc), const SizedBox(width: 10), shopDetails(shop, context, shopsBloc)],
       ),
     ),
   );
@@ -78,9 +80,9 @@ Widget noImage() {
 // endregion
 
 // region shopDetails
-Widget shopDetails(Result shop) {
+Widget shopDetails(Result shop, BuildContext context, ShopsBloc shopsBloc) {
   return CupertinoButton(
-    onPressed: () {},
+    onPressed: () => shopsBloc.openMapPopup(shop),
     padding: EdgeInsets.zero,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

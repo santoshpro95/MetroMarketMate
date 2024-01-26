@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_launcher/map_launcher.dart' as map;
 import 'package:mmm/features/home/home_bloc.dart';
 import 'package:mmm/features/shop_images/shop_images_screen.dart';
 import 'package:mmm/model/get_shops_response.dart';
@@ -11,6 +12,7 @@ import 'package:mmm/services/home_services.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
 
+import 'open_map_popup.dart';
 import 'shop_image_popup.dart';
 
 // region Shop Status
@@ -73,6 +75,18 @@ class ShopsBloc {
     var screen = ShopImagesScreen(images: images);
     var route = CommonMethods.createRouteRTL(screen);
     Navigator.push(context, route);
+  }
+
+  // endregion
+
+  // region openMapPopup
+  Future<void> openMapPopup(Result shop) async {
+    var isAppleMapInstalled = await map.MapLauncher.isMapAvailable(map.MapType.apple);
+    var isGoogleMapInstalled = await map.MapLauncher.isMapAvailable(map.MapType.google);
+    if (!context.mounted) return;
+
+    // open map popup
+    showModalBottomSheet(context: context, builder: (context) => mapPopup(context, isAppleMapInstalled ?? true, isGoogleMapInstalled ?? true, shop));
   }
 
   // endregion

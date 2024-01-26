@@ -118,7 +118,7 @@ class _ShopsScreenState extends State<ShopsScreen> {
         childAspectRatio: 0.7,
         crossAxisSpacing: 10,
         children: List<Widget>.generate(shopsBloc.shops.length, (index) {
-          return shopListItem(shopsBloc.shops[index], shopsBloc);
+          return shopListItem(shopsBloc.shops[index], shopsBloc, context);
         }));
   }
 // endregion
