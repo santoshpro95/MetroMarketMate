@@ -134,7 +134,7 @@ class ShopsBloc {
     // show shop details
     showShopCtrl.value = shop;
     markers.clear();
-    
+
     // generate markers
     for (var shop in shops) {
       var marker = getMarker(shop, shop.name == showShopCtrl.value.name);
@@ -151,6 +151,13 @@ class ShopsBloc {
   void removeShopDetails() {
     // clear shop
     showShopCtrl.value = Result();
+    markers.clear();
+
+    // generate markers
+    for (var shop in shops) {
+      var marker = getMarker(shop, false);
+      markers.add(marker);
+    }
 
     // refresh mapview
     if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
