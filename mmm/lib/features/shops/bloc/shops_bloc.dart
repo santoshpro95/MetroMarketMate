@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart' as map;
 import 'package:mmm/features/home/home_bloc.dart';
@@ -12,6 +14,8 @@ import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
 import '../ui/open_map_popup.dart';
+import 'dart:convert';
+import 'dart:ui' as ui;
 
 // region Shop Status
 enum ShopStatus { Loading, Empty, Success, Failure }
@@ -64,9 +68,20 @@ class ShopsBloc {
 
   // region initMap
   Future<void> initMap() async {
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.marker).then((value) => markerIcon = value);
-    BitmapDescriptor.fromAssetImage(const ImageConfiguration(), AppImages.selectedMarker).then((value) => selectedMarkerIcon = value);
+    markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+    selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet);
     googleMapController = await controller.future;
+  }
+
+  // endregion
+
+  // region getBytesFromAsset
+  Future<Uint8List> getBytesFromAsset(String path) async {
+    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: pixelRatio.round() * 30);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
   // endregion

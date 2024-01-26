@@ -104,7 +104,7 @@ class _ShopsScreenState extends State<ShopsScreen> {
                             compassEnabled: true,
                             mapType: MapType.normal,
                             onTap: (point) => shopsBloc.removeShopDetails(),
-                            trafficEnabled: true,
+                            trafficEnabled: false,
                             markers: shopsBloc.markers,
                             mapToolbarEnabled: true,
                             myLocationButtonEnabled: false,
