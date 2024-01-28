@@ -43,11 +43,24 @@ class _ShopImagesScreenState extends State<ShopImagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(foregroundColor: Colors.white,
+      appBar: AppBar(
+          foregroundColor: Colors.white,
           actions: [
-            CupertinoButton(child: const Icon(Icons.call, color: Colors.white), onPressed: ()=> shopImagesBloc.callRestaurant())
+            StreamBuilder<bool>(
+                stream: shopImagesBloc.phoneCtrl.stream,
+                initialData: true,
+                builder: (context, snapshot) {
+                  if (snapshot.data!) {
+                    return Center(
+                        child: Container(
+                            margin: const EdgeInsets.only(right: 20), height: 20, width: 20, child: const CircularProgressIndicator(strokeWidth: 2)));
+                  }
+                  return CupertinoButton(child: const Icon(Icons.call, color: Colors.white), onPressed: () => shopImagesBloc.shopPhonePopup());
+                })
           ],
-          backgroundColor: AppColors.background, elevation: 0, title: Text(AppStrings.shopImages)),
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          title: Text(AppStrings.shopImages)),
       body: body(),
     );
   }

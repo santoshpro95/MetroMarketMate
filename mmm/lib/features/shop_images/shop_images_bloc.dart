@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:http/http.dart' as http;
+import 'package:mmm/features/shop_images/phone_number_popup.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ShopImagesBloc {
   // region Common Variables
   BuildContext context;
   List<String> images;
+  List<String> phoneNumber = [];
   final PageController pageController = PageController();
   int activePage = 0;
 
@@ -17,6 +21,7 @@ class ShopImagesBloc {
 
   // region Controller
   final shopImageCtrl = StreamController<int>.broadcast();
+  final phoneCtrl = StreamController<bool>.broadcast();
 
   // endregion
 
@@ -26,15 +31,68 @@ class ShopImagesBloc {
   // endregion
 
   // region Init
-  void init() {}
+  void init() {
+    loadPhone();
+  }
 
   // endregion
 
-  // region callRestaurant
-  Future<void> callRestaurant() async {
-    File imageFile = await urlToFile(images.first);
-    var text = await getImageToText(imageFile);
-    print(text);
+  // region loadPhone
+  Future<void> loadPhone() async {
+    try {
+      phoneNumber.clear();
+      for (var image in images) {
+        File imageFile = await urlToFile(image);
+        var text = await getImageToText(imageFile);
+        List<String> numbers = extractNumbers(text);
+        phoneNumber.addAll(numbers);
+      }
+    } catch (exception) {
+      print(exception);
+    } finally {
+      if (!phoneCtrl.isClosed) phoneCtrl.sink.add(false);
+    }
+  }
+
+  // endregion
+
+  // region shopPhonePopup
+  void shopPhonePopup() {
+    showModalBottomSheet(context: context, builder: (context) => phoneNumberPopup(this));
+  }
+
+  // endregion
+
+  // region phoneCall
+  void phoneCall(String phone) async {
+    try {
+      final call = Uri.parse('tel:+91 $phone');
+      if (await canLaunchUrl(call)) {
+        launchUrl(call);
+      } else {
+        throw 'Could not launch $call';
+      }
+    } catch (exception) {
+      print(exception);
+    }
+  }
+
+  // endregion
+
+  // region whatsapp
+  void whatsapp(String phone) async {
+    var androidUrl = "whatsapp://send?phone=$phone&text=Hi, I need order";
+    var iosUrl = "https://wa.me/$phone?text=${Uri.parse('Hi, I need order')}";
+
+    try {
+      if (Platform.isIOS) {
+        await launchUrl(Uri.parse(iosUrl));
+      } else {
+        await launchUrl(Uri.parse(androidUrl));
+      }
+    } catch (exception) {
+      print(exception);
+    }
   }
 
   // endregion
@@ -64,6 +122,16 @@ class ShopImagesBloc {
     final RecognizedText recognizedText = await textRecognizer.processImage(InputImage.fromFile(image));
     String text = recognizedText.text.toString();
     return text;
+  }
+
+  // endregion
+
+  // region  extractNumbers
+  List<String> extractNumbers(String input) {
+    RegExp regExp = RegExp(r'\b\d{10}\b');
+    Iterable<RegExpMatch> matches = regExp.allMatches(input);
+    List<String> numbers = matches.map((match) => match.group(0)!).toList();
+    return numbers;
   }
 
   // endregion

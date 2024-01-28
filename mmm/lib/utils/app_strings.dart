@@ -4,4 +4,5 @@ class AppStrings {
   static String openAppleMap = "Open Apple Map";
   static String openGoogleMap = "Open Google Map";
   static String cancel = "Cancel";
+  static String contactNo = "Contact Numbers";
 }
