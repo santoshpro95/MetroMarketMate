@@ -43,7 +43,11 @@ class _ShopImagesScreenState extends State<ShopImagesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(foregroundColor: Colors.white, backgroundColor: AppColors.background, elevation: 0, title: Text(AppStrings.shopImages)),
+      appBar: AppBar(foregroundColor: Colors.white,
+          actions: [
+            CupertinoButton(child: const Icon(Icons.call, color: Colors.white), onPressed: ()=> shopImagesBloc.callRestaurant())
+          ],
+          backgroundColor: AppColors.background, elevation: 0, title: Text(AppStrings.shopImages)),
       body: body(),
     );
   }

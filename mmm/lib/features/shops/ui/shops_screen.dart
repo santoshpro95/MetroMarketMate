@@ -149,14 +149,13 @@ class _ShopsScreenState extends State<ShopsScreen> {
                 child: Container(
                   width: 100,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(width: 2, color: AppColors.background),
-                      color: AppColors.background),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   height: 100,
                   child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.network(shop.images!.first, fit: BoxFit.cover)),
                 ),
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: 10),
               Expanded(
                   child: CupertinoButton(
                 onPressed: () => shopsBloc.openMapPopup(shop),
@@ -165,7 +164,7 @@ class _ShopsScreenState extends State<ShopsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    Text("${shop.name}", maxLines: 2, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
+                    Text("${shop.name}", overflow: TextOverflow.ellipsis, maxLines: 2, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
                     const SizedBox(height: 5),
                     Row(
                       children: [

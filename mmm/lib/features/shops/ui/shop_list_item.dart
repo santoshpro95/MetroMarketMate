@@ -26,40 +26,24 @@ Widget shopListItem(Result shop, ShopsBloc shopsBloc, BuildContext context) {
 // region shopImage
 Widget shopImage(Result shop, ShopsBloc shopsBloc) {
   return Expanded(
-    child: Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(width: 3, color: AppColors.background)),
-      child: Stack(
-        children: [
-          noImage(),
-          shop.images!.isNotEmpty
-              ? CupertinoButton(
-            onPressed: () => shopsBloc.viewImageBtn(shop.images!),
-            padding: EdgeInsets.zero,
-                child: Container(
+    child: Stack(
+      children: [
+        noImage(),
+        shop.images!.isNotEmpty
+            ? CupertinoButton(
+                onPressed: () => shopsBloc.viewImageBtn(shop.images!),
+                padding: EdgeInsets.zero,
+                child: SizedBox(
                     height: double.maxFinite,
                     width: double.maxFinite,
-                    color: AppColors.background,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10), child: SizedBox.fromSize(child: Image.network(shop.images!.first, fit: BoxFit.cover)))),
+                        borderRadius: BorderRadius.circular(10),
+                        child: SizedBox.fromSize(child: Image.network(shop.images!.first, fit: BoxFit.cover)))),
               )
-              : const SizedBox(),
-          viewImageBtn(shop.images!, shopsBloc)
-        ],
-      ),
+            : const SizedBox()
+      ],
     ),
   );
-}
-// endregion
-
-// region viewImageBtn
-Widget viewImageBtn(List<String> images, ShopsBloc shopsBloc) {
-  if (images.isEmpty) return const SizedBox();
-  return Align(
-      alignment: Alignment.bottomRight,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SvgPicture.asset(AppImages.images, height: 20, colorFilter: const ColorFilter.mode(AppColors.background, BlendMode.srcIn)),
-      ));
 }
 // endregion
 

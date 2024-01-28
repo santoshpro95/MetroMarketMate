@@ -25,14 +25,16 @@ class GetShopsResponse {
 }
 
 class Result {
+  String? id;
   String? name;
   double? lat;
   double? lng;
   List<String>? images;
 
-  Result({this.name, this.lat, this.lng, this.images});
+  Result({this.id, this.name, this.lat, this.lng, this.images});
 
   Result.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     lat = json['lat'];
     lng = json['lng'];
@@ -41,6 +43,7 @@ class Result {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['name'] = this.name;
     data['lat'] = this.lat;
     data['lng'] = this.lng;
