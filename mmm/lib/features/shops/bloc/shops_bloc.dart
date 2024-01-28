@@ -51,6 +51,7 @@ class ShopsBloc {
   final shopCtrl = StreamController<ShopStatus>.broadcast();
   final mapCtrl = StreamController<bool>.broadcast();
   final showShopCtrl = ValueNotifier(Result());
+  final loadingCtrl = StreamController<bool>.broadcast();
 
   // endregion
 
@@ -60,7 +61,7 @@ class ShopsBloc {
   // endregion
 
   // region Init
-  void init() async{
+  void init() async {
     initMap();
     getShops();
     homeBloc.citySelectionCtrl.addListener(() => getShops(isRefresh: true));
@@ -109,8 +110,13 @@ class ShopsBloc {
   // endregion
 
   // region getShops
-  Future<void> getShops({bool isRefresh  = false}) async {
+  Future<void> getShops({bool isRefresh = false}) async {
     try {
+      // loading
+      if(isRefresh) {
+        if(!loadingCtrl.isClosed) loadingCtrl.sink.add(true);
+      }
+
       // get shops
       var response = await homeServices.getShops(homeBloc.citySelectionCtrl.value);
 
@@ -120,6 +126,7 @@ class ShopsBloc {
       }
 
       // get shops
+      removeShopDetails();
       shops.clear();
       shops.addAll(response.result!);
 
@@ -140,11 +147,13 @@ class ShopsBloc {
       if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
 
       // move to first shop location
-      if(!isRefresh) googleMapController = await controller.future;
+      if (!isRefresh) googleMapController = await controller.future;
       await googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(shops.first.lat!, shops.first.lng!)));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);
+    } finally{
+      if(!loadingCtrl.isClosed) loadingCtrl.sink.add(false);
     }
   }
 

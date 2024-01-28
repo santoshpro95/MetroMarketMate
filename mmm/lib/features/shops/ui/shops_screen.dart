@@ -49,7 +49,9 @@ class _ShopsScreenState extends State<ShopsScreen> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: StreamBuilder<ShopStatus>(
+        child: Stack(
+      children: [
+        StreamBuilder<ShopStatus>(
             stream: shopsBloc.shopCtrl.stream,
             initialData: ShopStatus.Loading,
             builder: (context, snapshot) {
@@ -64,7 +66,33 @@ class _ShopsScreenState extends State<ShopsScreen> {
 
               // success
               return shopView();
-            }));
+            }),
+        fullScreenLoading()
+      ],
+    ));
+  }
+
+  // endregion
+
+  // region fullScreenLoading
+  Widget fullScreenLoading() {
+    return StreamBuilder<bool>(
+        stream: shopsBloc.loadingCtrl.stream,
+        initialData: false,
+        builder: (context, snapshot) {
+          return Visibility(
+            visible: snapshot.data!,
+            child: Container(
+              height: double.maxFinite,
+              width: double.maxFinite,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.black.withAlpha(90)),
+              child: const Center(
+                child: Text("Loading...", style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w300)),
+              ),
+            ),
+          );
+        });
   }
 
   // endregion
@@ -164,7 +192,10 @@ class _ShopsScreenState extends State<ShopsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 10),
-                    Text("${shop.name}", overflow: TextOverflow.ellipsis, maxLines: 2, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
+                    Text("${shop.name}",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
                     const SizedBox(height: 5),
                     Row(
                       children: [
