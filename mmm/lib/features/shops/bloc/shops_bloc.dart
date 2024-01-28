@@ -11,6 +11,7 @@ import 'package:mmm/features/shop_images/shop_images_screen.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
 import 'package:mmm/utils/app_colors.dart';
+import 'package:mmm/utils/app_constants.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
 import '../ui/open_map_popup.dart';
@@ -59,9 +60,10 @@ class ShopsBloc {
   // endregion
 
   // region Init
-  void init() {
+  void init() async{
     initMap();
     getShops();
+    homeBloc.citySelectionCtrl.addListener(() => getShops(isRefresh: true));
   }
 
   // endregion
@@ -70,7 +72,6 @@ class ShopsBloc {
   Future<void> initMap() async {
     markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
     selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet);
-    googleMapController = await controller.future;
   }
 
   // endregion
@@ -108,10 +109,10 @@ class ShopsBloc {
   // endregion
 
   // region getShops
-  Future<void> getShops() async {
+  Future<void> getShops({bool isRefresh  = false}) async {
     try {
       // get shops
-      var response = await homeServices.getShops();
+      var response = await homeServices.getShops(homeBloc.citySelectionCtrl.value);
 
       // check result
       if (response.result == null) {
@@ -125,6 +126,7 @@ class ShopsBloc {
       // check empty shops
       if (shops.isEmpty) {
         if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Empty);
+        return;
       }
 
       // generate markers
@@ -136,6 +138,10 @@ class ShopsBloc {
       // refresh list and map
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Success);
       if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
+
+      // move to first shop location
+      if(!isRefresh) googleMapController = await controller.future;
+      await googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(shops.first.lat!, shops.first.lng!)));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);

@@ -50,11 +50,7 @@ class _ShopImagesScreenState extends State<ShopImagesScreen> {
                 stream: shopImagesBloc.phoneCtrl.stream,
                 initialData: true,
                 builder: (context, snapshot) {
-                  if (snapshot.data!) {
-                    return Center(
-                        child: Container(
-                            margin: const EdgeInsets.only(right: 20), height: 20, width: 20, child: const CircularProgressIndicator(strokeWidth: 2)));
-                  }
+                  if (snapshot.data!) return const SizedBox();
                   return CupertinoButton(child: const Icon(Icons.call, color: Colors.white), onPressed: () => shopImagesBloc.shopPhonePopup());
                 })
           ],

@@ -27,20 +27,27 @@ Widget phoneNumberPopup(ShopImagesBloc shopImagesBloc) {
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          children: [
-                            Expanded(child: Text(shopImagesBloc.phoneNumber[index], style: const TextStyle(fontSize: 20))),
-                            CupertinoButton(
-                                onPressed: () => shopImagesBloc.phoneCall(shopImagesBloc.phoneNumber[index]),
-                                padding: EdgeInsets.zero,
-                                child: const Icon(Icons.call, color: AppColors.background)),
-                            CupertinoButton(
-                                onPressed: () => shopImagesBloc.whatsapp(shopImagesBloc.phoneNumber[index]),
-                                padding: EdgeInsets.zero,
-                                child: SvgPicture.asset(AppImages.whatsapp))
-                          ],
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.primary
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          child: Row(
+                            children: [
+                              Expanded(child: Text(shopImagesBloc.phoneNumber[index], style: const TextStyle(fontSize: 20))),
+                              CupertinoButton(
+                                  onPressed: () => shopImagesBloc.phoneCall(shopImagesBloc.phoneNumber[index]),
+                                  padding: EdgeInsets.zero,
+                                  child: const Icon(Icons.call, color: AppColors.background)),
+                              CupertinoButton(
+                                  onPressed: () => shopImagesBloc.whatsapp(shopImagesBloc.phoneNumber[index]),
+                                  padding: EdgeInsets.zero,
+                                  child: SvgPicture.asset(AppImages.whatsapp))
+                            ],
+                          ),
                         ),
                       );
                     },
