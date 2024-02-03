@@ -91,6 +91,7 @@ class ShopsBloc {
       mapBloc.removeShopDetails(allShops);
       allShops.clear();
       searchedShop.clear();
+      mapBloc.markers.clear();
 
       // add all shops
       allShops.addAll(response.result!);
@@ -108,13 +109,13 @@ class ShopsBloc {
         mapBloc.markers.add(marker);
       }
 
-      // move to first shop location
-      if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
-      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(allShops.first.lat!, allShops.first.lng!)));
-
       // refresh list and map
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Success);
       if (!mapBloc.mapCtrl.isClosed) mapBloc.mapCtrl.sink.add(true);
+
+      // move to first shop location
+      if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
+      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(allShops.first.lat!, allShops.first.lng!)));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);

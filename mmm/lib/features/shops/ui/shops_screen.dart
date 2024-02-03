@@ -87,7 +87,8 @@ class _ShopsScreenState extends State<ShopsScreen> {
 
                                   // success
                                   return shopView();
-                                })
+                                }),
+                            fullScreenLoading()
                           ],
                         )
                       ],
