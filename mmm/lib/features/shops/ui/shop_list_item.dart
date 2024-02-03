@@ -9,15 +9,22 @@ import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
 
 // region shopListItem
-Widget shopListItem(Result shop, ShopsBloc shopsBloc, BuildContext context) {
+Widget shopListItem(Result shop, ShopsBloc shopsBloc) {
+  if (shop.name == null) return const SizedBox();
   return Container(
-    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.primary),
+    height: 110,
     margin: const EdgeInsets.only(top: 10),
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.primary.withOpacity(0.7)),
     child: Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [shopImage(shop, shopsBloc), const SizedBox(width: 10), shopDetails(shop, context, shopsBloc)],
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          shopImage(shopsBloc, shop),
+          const SizedBox(width: 10),
+          shopDetails(shopsBloc, shop)
+        ],
       ),
     ),
   );
@@ -25,61 +32,47 @@ Widget shopListItem(Result shop, ShopsBloc shopsBloc, BuildContext context) {
 // endregion
 
 // region shopImage
-Widget shopImage(Result shop, ShopsBloc shopsBloc) {
-  return Expanded(
+Widget shopImage(ShopsBloc shopsBloc, Result shop){
+  return CupertinoButton(
+    onPressed: () => shopsBloc.viewImageBtn(shop.images!),
+    padding: EdgeInsets.zero,
     child: Stack(
       children: [
-        noImage(),
-        shop.images!.isNotEmpty
-            ? CupertinoButton(
-                onPressed: () => shopsBloc.viewImageBtn(shop.images!),
-                padding: EdgeInsets.zero,
-                child: SizedBox(
-                    height: double.maxFinite,
-                    width: double.maxFinite,
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: SizedBox.fromSize(child: CachedNetworkImage(imageUrl: shop.images!.first, fit: BoxFit.cover)))),
-              )
-            : const SizedBox()
+        SvgPicture.asset(AppImages.imgPlaceholder,
+            height: 100, width: 100, colorFilter: const ColorFilter.mode(AppColors.primary, BlendMode.srcIn)),
+        ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: CachedNetworkImage(imageUrl: shop.images!.first, fit: BoxFit.cover, height: 100, width: 100)),
       ],
-    ),
-  );
-}
-// endregion
-
-// region NoImage
-Widget noImage() {
-  return SizedBox(
-    height: double.maxFinite,
-    width: double.maxFinite,
-    child: Padding(
-      padding: const EdgeInsets.all(5),
-      child: SvgPicture.asset(AppImages.imgPlaceholder, colorFilter: ColorFilter.mode(Colors.grey.withAlpha(80), BlendMode.srcIn)),
     ),
   );
 }
 // endregion
 
 // region shopDetails
-Widget shopDetails(Result shop, BuildContext context, ShopsBloc shopsBloc) {
-  return CupertinoButton(
-    onPressed: () => shopsBloc.openMapPopup(shop),
-    padding: EdgeInsets.zero,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 5),
-        Text("${shop.name}", maxLines: 2, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
-        Row(
+Widget shopDetails(ShopsBloc shopsBloc, Result shop){
+  return Expanded(
+      child: CupertinoButton(
+        onPressed: () => shopsBloc.mapBloc.openMapPopup(shop, shopsBloc.context),
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.directions, color: AppColors.background),
-            const SizedBox(width: 5),
-            Text(AppStrings.checkDirection, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w700, fontSize: 14)),
+            const SizedBox(height: 10),
+            Text("${shop.name}",
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w800, fontSize: 16)),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                const Icon(Icons.directions, color: AppColors.background),
+                const SizedBox(width: 5),
+                Text(AppStrings.checkDirection, style: const TextStyle(color: AppColors.background, fontWeight: FontWeight.w700, fontSize: 14)),
+              ],
+            ),
           ],
         ),
-      ],
-    ),
-  );
+      ));
 }
 // endregion

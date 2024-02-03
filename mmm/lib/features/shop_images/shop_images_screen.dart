@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mmm/features/shop_images/shop_images_bloc.dart';
@@ -74,7 +75,7 @@ class _ShopImagesScreenState extends State<ShopImagesScreen> {
                 child: PageView.builder(
                     controller: shopImagesBloc.pageController,
                     itemBuilder: (context, index) {
-                      return Image.network(shopImagesBloc.images[index]);
+                      return CachedNetworkImage(imageUrl: shopImagesBloc.images[index]);
                     },
                     onPageChanged: (int page) => shopImagesBloc.onPageChange(page),
                     itemCount: shopImagesBloc.images.length)),

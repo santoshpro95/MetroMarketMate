@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mmm/features/home/home_bloc.dart';
 import 'package:mmm/features/shop_images/shop_images_screen.dart';
+import 'package:mmm/features/shops/bloc/map_bloc.dart';
+import 'package:mmm/features/shops/bloc/search_bloc.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
+import 'package:mmm/utils/app_constants.dart';
 import 'package:mmm/utils/common_methods.dart';
-import '../ui/open_map_popup.dart';
-import 'dart:ui' as ui;
 
 // region Shop Status
 enum ShopStatus { Loading, Empty, Success, Failure }
@@ -21,19 +18,6 @@ class ShopsBloc {
   // region Common Variables
   BuildContext context;
   List<Result> shops = [];
-  HomeBloc homeBloc;
-  List<LatLng> allPoints = [];
-  PageController pageController = PageController();
-
-  // endregion
-
-  // region Google Map
-  late Completer<GoogleMapController> controller = Completer();
-  late GoogleMapController googleMapController;
-  CameraPosition initialCameraPosition = const CameraPosition(target: LatLng(28.490147, 77.094030), zoom: 15);
-  Set<Marker> markers = HashSet<Marker>();
-  late BitmapDescriptor markerIcon;
-  late BitmapDescriptor selectedMarkerIcon;
 
   // endregion
 
@@ -42,43 +26,36 @@ class ShopsBloc {
 
   // endregion
 
+  // region Blocs
+  MapBloc mapBloc = MapBloc();
+  SearchBloc searchBloc = SearchBloc();
+  // endregion
+
   // region Controller
   final shopCtrl = StreamController<ShopStatus>.broadcast();
-  final mapCtrl = StreamController<bool>.broadcast();
-  final showShopCtrl = ValueNotifier(Result());
   final loadingCtrl = StreamController<bool>.broadcast();
+  final citySelectionCtrl = ValueNotifier(AppConstants.cities.first);
+  final toggleViewCtrl = ValueNotifier<bool>(false);
 
   // endregion
 
   // region | Constructor |
-  ShopsBloc(this.context, this.homeBloc);
+  ShopsBloc(this.context);
 
   // endregion
 
   // region Init
   void init() async {
-    initMap();
+    mapBloc.initMap();
     getShops();
-    homeBloc.citySelectionCtrl.addListener(() => getShops(isRefresh: true));
   }
 
   // endregion
 
-  // region initMap
-  Future<void> initMap() async {
-    markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-    selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet);
-  }
-
-  // endregion
-
-  // region getBytesFromAsset
-  Future<Uint8List> getBytesFromAsset(String path) async {
-    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: pixelRatio.round() * 30);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  // region onChangeCity
+  void onChangeCity(String newValue) {
+    citySelectionCtrl.value = newValue;
+    getShops(isRefresh: true);
   }
 
   // endregion
@@ -92,13 +69,6 @@ class ShopsBloc {
 
   // endregion
 
-  // region openMapPopup
-  Future<void> openMapPopup(Result shop) async {
-    showModalBottomSheet(context: context, builder: (context) => mapPopup(context, shop));
-  }
-
-  // endregion
-
   // region getShops
   Future<void> getShops({bool isRefresh = false}) async {
     try {
@@ -108,7 +78,7 @@ class ShopsBloc {
       }
 
       // get shops
-      var response = await homeServices.getShops(homeBloc.citySelectionCtrl.value);
+      var response = await homeServices.getShops(citySelectionCtrl.value);
 
       // check result
       if (response.result == null) {
@@ -116,7 +86,7 @@ class ShopsBloc {
       }
 
       // get shops
-      removeShopDetails();
+      mapBloc.removeShopDetails(shops);
       shops.clear();
       shops.addAll(response.result!);
 
@@ -128,17 +98,17 @@ class ShopsBloc {
 
       // generate markers
       for (var shop in shops) {
-        var marker = getMarker(shop, false);
-        markers.add(marker);
+        var marker = mapBloc.getMarker(shop, false, shops);
+        mapBloc.markers.add(marker);
       }
 
       // refresh list and map
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Success);
-      if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
+      if (!mapBloc.mapCtrl.isClosed) mapBloc.mapCtrl.sink.add(true);
 
       // move to first shop location
-      if (!isRefresh) googleMapController = await controller.future;
-      await googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(shops.first.lat!, shops.first.lng!)));
+      if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
+      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(shops.first.lat!, shops.first.lng!)));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);
@@ -149,58 +119,13 @@ class ShopsBloc {
 
   // endregion
 
-  // region onTapMarker
-  Future<void> onTapMarker(Result shop) async {
-    // show shop details
-    showShopCtrl.value = shop;
-    markers.clear();
-
-    // generate markers
-    for (var shop in shops) {
-      var marker = getMarker(shop, shop.name == showShopCtrl.value.name);
-      markers.add(marker);
-    }
-
-    // refresh mapview
-    if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
-  }
-
-  // endregion
-
-  // region remove ShopDetails
-  void removeShopDetails() {
-    // clear shop
-    showShopCtrl.value = Result();
-    markers.clear();
-
-    // generate markers
-    for (var shop in shops) {
-      var marker = getMarker(shop, false);
-      markers.add(marker);
-    }
-
-    // refresh mapview
-    if (!mapCtrl.isClosed) mapCtrl.sink.add(true);
-  }
-
-  // endregion
-
-  // region GetMarker
-  Marker getMarker(Result shop, bool isSelectedMarker) {
-    return Marker(
-      draggable: false,
-      consumeTapEvents: true,
-      visible: true,
-      onTap: () => onTapMarker(shop),
-      markerId: MarkerId('${shop.lat}${shop.lng}'),
-      icon: isSelectedMarker ? selectedMarkerIcon : markerIcon,
-      position: LatLng(shop.lat!, shop.lng!),
-    );
-  }
-
-  // endregion
-
   // region Dispose
-  void dispose() {}
+  void dispose() {
+    citySelectionCtrl.dispose();
+    toggleViewCtrl.dispose();
+    shopCtrl.close();
+    mapBloc.dispose();
+    loadingCtrl.close();
+  }
 // endregion
 }

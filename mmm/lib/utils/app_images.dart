@@ -5,4 +5,5 @@ class AppImages {
   static const apple = 'assets/images/apple.svg';
   static const google = 'assets/images/google.svg';
   static const whatsapp = 'assets/images/whatsapp.svg';
+  static const search = 'assets/images/search.svg';
 }

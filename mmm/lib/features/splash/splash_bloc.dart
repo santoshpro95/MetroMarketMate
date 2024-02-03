@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mmm/features/home/home_screen.dart';
+import 'package:mmm/features/shops/ui/shops_screen.dart';
 
 class SplashBloc {
   // region Common Methods
@@ -26,7 +26,7 @@ class SplashBloc {
     await Future.delayed(const Duration(seconds: 1));
 
     // region open home screen
-    var screen = const HomeScreen();
+    var screen = const ShopsScreen();
     var route = PageRouteBuilder(
       pageBuilder: (_, __, ___) => screen,
       transitionDuration: const Duration(milliseconds: 300),
