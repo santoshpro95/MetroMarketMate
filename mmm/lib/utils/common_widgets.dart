@@ -49,4 +49,10 @@ class CommonWidgets {
   }
 
 // endregion
+
+// region noResult
+  static Widget noResult() {
+    return const Center(child: Text("No Result", style: TextStyle(color: AppColors.primary)));
+  }
+// endregion
 }

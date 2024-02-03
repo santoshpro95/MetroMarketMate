@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mmm/features/shops/bloc/shops_bloc.dart';
 import 'package:mmm/features/shops/ui/header_filter.dart';
 import 'package:mmm/utils/app_colors.dart';
+import 'package:mmm/utils/common_widgets.dart';
 import 'map_view.dart';
 import 'search_shop.dart';
 import 'shop_list_item.dart';
@@ -62,27 +63,36 @@ class _ShopsScreenState extends State<ShopsScreen> {
           header(shopsBloc),
           searchShop(shopsBloc),
           Expanded(
-              child: Stack(
-            children: [
-              StreamBuilder<ShopStatus>(
-                  stream: shopsBloc.shopCtrl.stream,
-                  initialData: ShopStatus.Loading,
-                  builder: (context, snapshot) {
-                    // loading
-                    if (snapshot.data! == ShopStatus.Loading) return const Center(child: CircularProgressIndicator());
+              child: ValueListenableBuilder<bool>(
+                  valueListenable: shopsBloc.toggleViewCtrl,
+                  builder: (context, isMapView, _) {
+                    return IndexedStack(
+                      index: isMapView ? 0 : 1,
+                      children: [
+                        googleMap(shopsBloc),
+                        Stack(
+                          children: [
+                            StreamBuilder<ShopStatus>(
+                                stream: shopsBloc.shopCtrl.stream,
+                                initialData: ShopStatus.Loading,
+                                builder: (context, snapshot) {
+                                  // loading
+                                  if (snapshot.data! == ShopStatus.Loading) return const Center(child: CircularProgressIndicator());
 
-                    // failure
-                    if (snapshot.data! == ShopStatus.Failure) return const Center(child: Text("Failed, try again"));
+                                  // failure
+                                  if (snapshot.data! == ShopStatus.Failure) return const Center(child: Text("Failed, try again"));
 
-                    // empty
-                    if (snapshot.data! == ShopStatus.Empty) return const Center(child: Text("No Result"));
+                                  // empty
+                                  if (snapshot.data! == ShopStatus.Empty) return CommonWidgets.noResult();
 
-                    // success
-                    return shopView();
-                  }),
-              fullScreenLoading()
-            ],
-          )),
+                                  // success
+                                  return shopView();
+                                })
+                          ],
+                        )
+                      ],
+                    );
+                  })),
         ],
       ),
     );
@@ -129,9 +139,11 @@ class _ShopsScreenState extends State<ShopsScreen> {
 
   // region shopList
   Widget shopList() {
-    return ListView.builder(itemBuilder: (context, index){
-      return shopListItem(shopsBloc.shops[index], shopsBloc);
-    }, itemCount:  shopsBloc.shops.length);
+    return ListView.builder(
+        itemBuilder: (context, index) {
+          return shopListItem(shopsBloc.searchedShop[index], shopsBloc);
+        },
+        itemCount: shopsBloc.searchedShop.length);
   }
 // endregion
 }

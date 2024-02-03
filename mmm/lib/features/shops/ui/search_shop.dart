@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mmm/features/shops/bloc/shops_bloc.dart';
@@ -12,16 +13,27 @@ Widget searchShop(ShopsBloc shopsBloc) {
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: AppColors.primary),
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-           Expanded(
-              child: TextField(
-                onChanged: (text)=> shopsBloc.searchBloc.onSearch(text),
-            decoration: const InputDecoration.collapsed(hintText: "Search by shop name"),
-          )),
-          SvgPicture.asset(AppImages.search)
-        ],
-      ),
+      child: StreamBuilder<bool>(
+          stream: shopsBloc.searchBloc.searchCtrl.stream,
+          initialData: false,
+          builder: (context, snapshot) {
+            return Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                  controller: shopsBloc.searchBloc.searchTextCtrl,
+                  onChanged: (text) => shopsBloc.searchBloc.onSearch(text, shopsBloc),
+                  decoration: const InputDecoration.collapsed(hintText: "Search by shop name"),
+                )),
+                snapshot.data!
+                    ? SvgPicture.asset(AppImages.search)
+                    : CupertinoButton(
+                        padding: EdgeInsets.zero,
+                        child: const Icon(Icons.close, color: AppColors.background),
+                        onPressed: () => shopsBloc.searchBloc.clearSearch(shopsBloc))
+              ],
+            );
+          }),
     ),
   );
 }

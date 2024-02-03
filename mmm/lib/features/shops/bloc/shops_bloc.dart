@@ -17,7 +17,8 @@ enum ShopStatus { Loading, Empty, Success, Failure }
 class ShopsBloc {
   // region Common Variables
   BuildContext context;
-  List<Result> shops = [];
+  List<Result> allShops = [];
+  List<Result> searchedShop = [];
 
   // endregion
 
@@ -29,6 +30,7 @@ class ShopsBloc {
   // region Blocs
   MapBloc mapBloc = MapBloc();
   SearchBloc searchBloc = SearchBloc();
+
   // endregion
 
   // region Controller
@@ -86,29 +88,33 @@ class ShopsBloc {
       }
 
       // get shops
-      mapBloc.removeShopDetails(shops);
-      shops.clear();
-      shops.addAll(response.result!);
+      mapBloc.removeShopDetails(allShops);
+      allShops.clear();
+      searchedShop.clear();
+
+      // add all shops
+      allShops.addAll(response.result!);
+      searchedShop.addAll(response.result!);
 
       // check empty shops
-      if (shops.isEmpty) {
+      if (allShops.isEmpty) {
         if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Empty);
         return;
       }
 
       // generate markers
-      for (var shop in shops) {
-        var marker = mapBloc.getMarker(shop, false, shops);
+      for (var shop in allShops) {
+        var marker = mapBloc.getMarker(shop, false, allShops);
         mapBloc.markers.add(marker);
       }
+
+      // move to first shop location
+      if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
+      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(allShops.first.lat!, allShops.first.lng!)));
 
       // refresh list and map
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Success);
       if (!mapBloc.mapCtrl.isClosed) mapBloc.mapCtrl.sink.add(true);
-
-      // move to first shop location
-      if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
-      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(shops.first.lat!, shops.first.lng!)));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);

@@ -30,7 +30,7 @@ Widget googleMap(ShopsBloc shopsBloc) {
                           myLocationEnabled: true,
                           compassEnabled: true,
                           mapType: MapType.hybrid,
-                          onTap: (point) => shopsBloc.mapBloc.removeShopDetails(shopsBloc.shops),
+                          onTap: (point) => shopsBloc.mapBloc.removeShopDetails(shopsBloc.allShops),
                           trafficEnabled: false,
                           markers: shopsBloc.mapBloc.markers,
                           mapToolbarEnabled: true,
