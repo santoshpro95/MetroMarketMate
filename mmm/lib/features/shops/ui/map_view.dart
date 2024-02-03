@@ -42,7 +42,13 @@ Widget googleMap(ShopsBloc shopsBloc) {
                           buildingsEnabled: true),
 
                       // show shopDetails
-                      shopListItem(shopDetails, shopsBloc)
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: shopListItem(shopDetails, shopsBloc),
+                        ),
+                      )
                     ],
                   );
                 });
