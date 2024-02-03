@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CommonMethods {
   //#region Region - Route Right to Left
@@ -24,7 +25,7 @@ class CommonMethods {
 
   // region boundsFromLatLngList
   static LatLngBounds boundsFromLatLngList(List<LatLng> list) {
-    var x0 , x1, y0, y1;
+    var x0, x1, y0, y1;
     for (LatLng latLng in list) {
       if (x0 == null) {
         x0 = x1 = latLng.latitude;
@@ -38,6 +39,18 @@ class CommonMethods {
     }
     return LatLngBounds(northeast: LatLng(x1, y1), southwest: LatLng(x0, y0));
   }
+
+  // endregion
+
+  // region open Url
+  static Future<void> openUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not open the map.';
+    }
+  }
+
   // endregion
 
   // region getBytesFromAsset

@@ -5,17 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:map_launcher/map_launcher.dart' as map;
 import 'package:mmm/features/home/home_bloc.dart';
 import 'package:mmm/features/shop_images/shop_images_screen.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/services/home_services.dart';
-import 'package:mmm/utils/app_colors.dart';
-import 'package:mmm/utils/app_constants.dart';
-import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/common_methods.dart';
 import '../ui/open_map_popup.dart';
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 // region Shop Status
@@ -99,12 +94,7 @@ class ShopsBloc {
 
   // region openMapPopup
   Future<void> openMapPopup(Result shop) async {
-    var isAppleMapInstalled = await map.MapLauncher.isMapAvailable(map.MapType.apple);
-    var isGoogleMapInstalled = await map.MapLauncher.isMapAvailable(map.MapType.google);
-    if (!context.mounted) return;
-
-    // open map popup
-    showModalBottomSheet(context: context, builder: (context) => mapPopup(context, isAppleMapInstalled ?? true, isGoogleMapInstalled ?? true, shop));
+    showModalBottomSheet(context: context, builder: (context) => mapPopup(context, shop));
   }
 
   // endregion
@@ -113,8 +103,8 @@ class ShopsBloc {
   Future<void> getShops({bool isRefresh = false}) async {
     try {
       // loading
-      if(isRefresh) {
-        if(!loadingCtrl.isClosed) loadingCtrl.sink.add(true);
+      if (isRefresh) {
+        if (!loadingCtrl.isClosed) loadingCtrl.sink.add(true);
       }
 
       // get shops
@@ -152,8 +142,8 @@ class ShopsBloc {
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
       print(exception);
-    } finally{
-      if(!loadingCtrl.isClosed) loadingCtrl.sink.add(false);
+    } finally {
+      if (!loadingCtrl.isClosed) loadingCtrl.sink.add(false);
     }
   }
 

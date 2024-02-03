@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -130,7 +131,7 @@ class _ShopsScreenState extends State<ShopsScreen> {
                             initialCameraPosition: shopsBloc.initialCameraPosition,
                             myLocationEnabled: true,
                             compassEnabled: true,
-                            mapType: MapType.normal,
+                            mapType: MapType.hybrid,
                             onTap: (point) => shopsBloc.removeShopDetails(),
                             trafficEnabled: false,
                             markers: shopsBloc.markers,
@@ -158,7 +159,7 @@ class _ShopsScreenState extends State<ShopsScreen> {
   Widget showShop(Result shop) {
     if (shop.name == null) return const SizedBox();
     return Align(
-      alignment: Alignment.bottomCenter,
+      alignment: Alignment.topCenter,
       child: Container(
         height: 100,
         margin: const EdgeInsets.all(10),
@@ -176,11 +177,9 @@ class _ShopsScreenState extends State<ShopsScreen> {
                 padding: EdgeInsets.zero,
                 child: Container(
                   width: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                   height: 100,
-                  child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.network(shop.images!.first, fit: BoxFit.cover)),
+                  child: ClipRRect(borderRadius: BorderRadius.circular(10), child: CachedNetworkImage(imageUrl: shop.images!.first, fit: BoxFit.cover)),
                 ),
               ),
               const SizedBox(width: 10),

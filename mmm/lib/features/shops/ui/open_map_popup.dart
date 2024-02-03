@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:map_launcher/map_launcher.dart';
 import 'package:mmm/model/get_shops_response.dart';
 import 'package:mmm/utils/app_colors.dart';
 import 'package:mmm/utils/app_images.dart';
 import 'package:mmm/utils/app_strings.dart';
+import 'package:mmm/utils/common_methods.dart';
 
 // region mapPopup
-Widget mapPopup(BuildContext context, bool isAppleMapInstalled, bool isGoogleMapInstalled, Result shop) {
+Widget mapPopup(BuildContext context, Result shop) {
   return Container(
     color: Colors.transparent,
     padding: const EdgeInsets.only(bottom: 20),
@@ -19,8 +19,8 @@ Widget mapPopup(BuildContext context, bool isAppleMapInstalled, bool isGoogleMap
       children: <Widget>[
         header(shop, context),
         Padding(padding: const EdgeInsets.all(10), child: Text("Check direction of '${shop.name!}' shop on map")),
-        googleMap(isGoogleMapInstalled, shop, context),
-        appleMap(isAppleMapInstalled, shop, context),
+        googleMap(shop, context),
+        appleMap(shop, context),
       ],
     ),
   );
@@ -28,14 +28,15 @@ Widget mapPopup(BuildContext context, bool isAppleMapInstalled, bool isGoogleMap
 // endregion
 
 // region appleMap
-Widget appleMap(bool isAppleMapInstalled, Result shop, BuildContext context) {
+Widget appleMap(Result shop, BuildContext context) {
   return Visibility(
-    visible: Platform.isIOS && isAppleMapInstalled,
+    visible: Platform.isIOS,
     child: CupertinoButton(
       padding: const EdgeInsets.all(0),
       onPressed: () {
         Navigator.pop(context);
-        MapLauncher.showMarker(mapType: MapType.apple, title: shop.name!, coords: Coords(shop.lat!, shop.lng!));
+        var url = 'https://maps.apple.com/?q=${shop.lat},${shop.lng}';
+        CommonMethods.openUrl(url);
       },
       child: Container(
         height: 45,
@@ -57,28 +58,26 @@ Widget appleMap(bool isAppleMapInstalled, Result shop, BuildContext context) {
 // endregion
 
 // region googleMap
-Widget googleMap(bool isGoogleMapInstalled, Result shop, BuildContext context) {
-  return Visibility(
-    visible: isGoogleMapInstalled,
-    child: CupertinoButton(
-      padding: const EdgeInsets.all(0),
-      onPressed: () {
-        Navigator.pop(context);
-        MapLauncher.showMarker(mapType: MapType.google, title: shop.name!, coords: Coords(shop.lat!, shop.lng!));
-      },
-      child: Container(
-        margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
-        height: 45,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5)), color: AppColors.primary),
-        alignment: Alignment.center,
-        child: Row(
-          children: [
-            SvgPicture.asset(AppImages.google),
-            const SizedBox(width: 10),
-            Text(AppStrings.openGoogleMap, style: const TextStyle(color: AppColors.background)),
-          ],
-        ),
+Widget googleMap(Result shop, BuildContext context) {
+  return CupertinoButton(
+    padding: const EdgeInsets.all(0),
+    onPressed: () {
+      Navigator.pop(context);
+      String url = 'https://www.google.com/maps/search/?api=1&query=${shop.lat},${shop.lng}';
+      CommonMethods.openUrl(url);
+    },
+    child: Container(
+      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5)), color: AppColors.primary),
+      alignment: Alignment.center,
+      child: Row(
+        children: [
+          SvgPicture.asset(AppImages.google),
+          const SizedBox(width: 10),
+          Text(AppStrings.openGoogleMap, style: const TextStyle(color: AppColors.background)),
+        ],
       ),
     ),
   );
