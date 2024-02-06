@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:mmm/features/shops/bloc/shops_bloc.dart';
-import 'package:mmm/model/get_shops_response.dart';
 
 class SearchBloc {
   // region Controller
@@ -38,9 +37,6 @@ class SearchBloc {
     } else {
       if (!shopsBloc.shopCtrl.isClosed) shopsBloc.shopCtrl.sink.add(ShopStatus.Success);
     }
-
-    // refresh map markers
-    shopsBloc.mapBloc.removeShopDetails(shopsBloc.searchedShop);
   }
 
 // endregion

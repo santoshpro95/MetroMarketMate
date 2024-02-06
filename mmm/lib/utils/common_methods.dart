@@ -15,6 +15,14 @@ class CommonMethods {
 
   //#endregion
 
+
+  // region to close keyboard
+  static closeKeyboard(BuildContext context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+// endregion
+
   // region read Json File
   static Future<Map<String, dynamic>> getJsonFile(String filePath) async {
     var jsonStr = await rootBundle.loadString(filePath);

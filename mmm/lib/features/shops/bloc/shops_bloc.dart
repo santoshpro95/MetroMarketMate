@@ -28,7 +28,7 @@ class ShopsBloc {
   // endregion
 
   // region Blocs
-  MapBloc mapBloc = MapBloc();
+  late MapBloc mapBloc;
   SearchBloc searchBloc = SearchBloc();
 
   // endregion
@@ -48,6 +48,7 @@ class ShopsBloc {
 
   // region Init
   void init() async {
+    mapBloc = MapBloc(context);
     mapBloc.initMap();
     getShops();
   }
@@ -67,6 +68,14 @@ class ShopsBloc {
     var screen = ShopImagesScreen(images: images);
     var route = CommonMethods.createRouteRTL(screen);
     Navigator.push(context, route);
+  }
+
+  // endregion
+
+  // region onChangeView
+  void onChangeView(bool value) {
+    toggleViewCtrl.value = !value;
+    CommonMethods.closeKeyboard(context);
   }
 
   // endregion
@@ -113,12 +122,12 @@ class ShopsBloc {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Success);
       if (!mapBloc.mapCtrl.isClosed) mapBloc.mapCtrl.sink.add(true);
 
-      // move to first shop location
+      // update camera
       if (!isRefresh) mapBloc.googleMapController = await mapBloc.controller.future;
-      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLng(LatLng(allShops.first.lat!, allShops.first.lng!)));
+      await mapBloc.googleMapController.animateCamera(CameraUpdate.newLatLngZoom(LatLng(allShops.first.lat!, allShops.first.lng!), 15));
     } catch (exception) {
       if (!shopCtrl.isClosed) shopCtrl.sink.add(ShopStatus.Failure);
-      print(exception);
+      print("get shop exception ==  $exception");
     } finally {
       if (!loadingCtrl.isClosed) loadingCtrl.sink.add(false);
     }

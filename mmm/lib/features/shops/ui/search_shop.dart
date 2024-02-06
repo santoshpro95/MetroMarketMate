@@ -15,7 +15,7 @@ Widget searchShop(ShopsBloc shopsBloc) {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StreamBuilder<bool>(
           stream: shopsBloc.searchBloc.searchCtrl.stream,
-          initialData: false,
+          initialData: true,
           builder: (context, snapshot) {
             return Row(
               children: [

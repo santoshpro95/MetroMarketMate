@@ -61,7 +61,6 @@ class _ShopsScreenState extends State<ShopsScreen> {
       child: Column(
         children: [
           header(shopsBloc),
-          searchShop(shopsBloc),
           Expanded(
               child: ValueListenableBuilder<bool>(
                   valueListenable: shopsBloc.toggleViewCtrl,
@@ -70,27 +69,23 @@ class _ShopsScreenState extends State<ShopsScreen> {
                       index: isMapView ? 0 : 1,
                       children: [
                         googleMap(shopsBloc),
-                        Stack(
-                          children: [
-                            StreamBuilder<ShopStatus>(
-                                stream: shopsBloc.shopCtrl.stream,
-                                initialData: ShopStatus.Loading,
-                                builder: (context, snapshot) {
-                                  // loading
-                                  if (snapshot.data! == ShopStatus.Loading) return const Center(child: CircularProgressIndicator());
+                        StreamBuilder<ShopStatus>(
+                            stream: shopsBloc.shopCtrl.stream,
+                            initialData: ShopStatus.Loading,
+                            builder: (context, snapshot) {
+                              // loading
+                              if (snapshot.data! == ShopStatus.Loading) return const Center(child: CircularProgressIndicator());
 
-                                  // failure
-                                  if (snapshot.data! == ShopStatus.Failure) return const Center(child: Text("Failed, try again"));
+                              // failure
+                              if (snapshot.data! == ShopStatus.Failure) return const Center(child: Text("Failed, try again"));
 
-                                  // empty
-                                  if (snapshot.data! == ShopStatus.Empty) return CommonWidgets.noResult();
+                              // empty
+                              if (snapshot.data! == ShopStatus.Empty) return CommonWidgets.noResult();
 
-                                  // success
-                                  return shopView();
-                                }),
-                            fullScreenLoading()
-                          ],
-                        )
+                              // success
+                              return shopView();
+                            }),
+                        fullScreenLoading()
                       ],
                     );
                   })),
@@ -140,11 +135,18 @@ class _ShopsScreenState extends State<ShopsScreen> {
 
   // region shopList
   Widget shopList() {
-    return ListView.builder(
-        itemBuilder: (context, index) {
-          return shopListItem(shopsBloc.searchedShop[index], shopsBloc);
-        },
-        itemCount: shopsBloc.searchedShop.length);
+    return Column(
+      children: [
+        searchShop(shopsBloc),
+        Expanded(
+          child: ListView.builder(
+              itemBuilder: (context, index) {
+                return shopListItem(shopsBloc.searchedShop[index], shopsBloc);
+              },
+              itemCount: shopsBloc.searchedShop.length),
+        ),
+      ],
+    );
   }
 // endregion
 }

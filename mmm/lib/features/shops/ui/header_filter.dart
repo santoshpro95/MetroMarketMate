@@ -15,7 +15,7 @@ Widget toggleView(ShopsBloc shopsBloc) {
       valueListenable: shopsBloc.toggleViewCtrl,
       builder: (context, value, _) {
         return GestureDetector(
-          onTap: () => shopsBloc.toggleViewCtrl.value = !value,
+          onTap: () => shopsBloc.onChangeView(value),
           child: Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: AppColors.primary),
             child: Padding(

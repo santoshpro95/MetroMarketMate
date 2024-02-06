@@ -4,8 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mmm/features/shops/ui/open_map_popup.dart';
 import 'package:mmm/model/get_shops_response.dart';
+import 'package:mmm/utils/custom_google_map.dart';
 
 class MapBloc {
+  // region Common Variables
+  BuildContext context;
+
+  // endregion
+
   // region Google Map
   late Completer<GoogleMapController> controller = Completer();
   late GoogleMapController googleMapController;
@@ -23,17 +29,27 @@ class MapBloc {
   // endregion
 
   // region | Constructor |
-  MapBloc();
+  MapBloc(this.context);
 
   // endregion
 
   // region initMap
-  Future<void> initMap() async {
+  void initMap() {
     markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
     selectedMarkerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet);
   }
 
 // endregion
+
+  // region onMapCreated
+  Future<void> onMapCreated(GoogleMapController gc) async {
+    if (!controller.isCompleted) {
+      controller.complete(gc);
+      await gc.setMapStyle(CustomGoogleMap.customMapStyle());
+    }
+  }
+
+  // endregion
 
   // region openMapPopup
   Future<void> openMapPopup(Result shop, BuildContext context) async {
@@ -62,6 +78,8 @@ class MapBloc {
 
   // region remove ShopDetails
   void removeShopDetails(List<Result> shops) {
+    if (shops.isEmpty) return;
+
     // clear shop
     showShopCtrl.value = Result();
     markers.clear();
